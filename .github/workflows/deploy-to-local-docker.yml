@@ -13,11 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v2
         with:
           java-version: '21'
-          distribution: 'temurin'
 
       - name: Build JAR with Maven
         run: mvn clean package
@@ -30,8 +29,12 @@ jobs:
       - name: Build Docker image
         run: docker-compose build
 
+      - name: List Docker images (for debugging)
+        run: docker images
+
       - name: Save Docker image as a tar file
-        run: docker save my-java-app -o my-java-app.tar
+        run: |
+          docker save $(docker-compose images -q my-java-app) -o my-java-app.tar
 
       - name: Copy Docker image to server
         uses: appleboy/scp-action@v0.1.1
