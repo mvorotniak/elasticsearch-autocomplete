@@ -13,6 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
       - name: Build Docker image
         run: docker-compose build
 
@@ -36,6 +44,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             docker load -i ~/my-java-app.tar
-            cd /docker-compose
+            cd /path/to/docker-compose # Change to the directory where your docker-compose.yml file is located
             docker-compose down
             docker-compose up -d
