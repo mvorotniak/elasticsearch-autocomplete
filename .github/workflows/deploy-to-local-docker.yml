@@ -27,9 +27,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Install dependencies and run tests
-        run: mvn clean install -B
-
       - name: Build JAR with Maven
         run: mvn clean package
 
@@ -44,9 +41,20 @@ jobs:
       - name: List Docker images (for debugging)
         run: docker images
 
+      - name: Get Docker image ID
+        id: get_image_id
+        run: echo "::set-output name=image_id::$(docker-compose images -q my-java-app)"
+
+      - name: Debug Image ID
+        run: echo "Image ID: ${{ steps.get_image_id.outputs.image_id }}"
+
       - name: Save Docker image as a tar file
         run: |
-          docker save $(docker-compose images -q my-java-app) -o my-java-app.tar
+          if [ -z "${{ steps.get_image_id.outputs.image_id }}" ]; then
+            echo "No image ID found for my-java-app. Exiting."
+            exit 1
+          fi
+          docker save ${{ steps.get_image_id.outputs.image_id }} -o my-java-app.tar
 
       - name: Copy Docker image to server
         uses: appleboy/scp-action@v0.1.1

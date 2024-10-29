@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   my-java-app:
+    container_name: my-java-app
     build:
       context: .
       dockerfile: Dockerfile
