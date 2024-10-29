@@ -45,9 +45,6 @@ jobs:
         id: get_image_id
         run: echo "::set-output name=image_id::$(docker-compose images -q my-java-app)"
 
-      - name: Debug Image ID
-        run: echo "Image ID: ${{ steps.get_image_id.outputs.image_id }}"
-
       - name: Save Docker image as a tar file
         run: |
           if [ -z "${{ steps.get_image_id.outputs.image_id }}" ]; then
