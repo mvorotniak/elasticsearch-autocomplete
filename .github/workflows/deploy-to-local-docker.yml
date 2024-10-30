@@ -36,7 +36,7 @@ jobs:
           sudo apt-get install -y docker-compose
 
       - name: Build Docker image
-        run: docker-compose build
+        run: docker build -t my-java-app .
 
       - name: List Docker images (for debugging)
         run: docker images
@@ -70,6 +70,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             docker load -i ~/my-java-app.tar
-            cd /path/to/docker-compose # Change to the directory where your docker-compose.yml file is located
+            cd /docker-compose
             docker-compose down
             docker-compose up -d
