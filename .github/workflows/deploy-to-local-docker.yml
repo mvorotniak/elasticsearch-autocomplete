@@ -19,14 +19,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Build JAR with Maven
         run: mvn clean package
 
@@ -41,17 +33,20 @@ jobs:
       - name: List Docker images (for debugging)
         run: docker images
 
-      - name: Get Docker image ID
+      - name: Get image ID for my-java-app
         id: get_image_id
-        run: echo "::set-output name=image_id::$(docker-compose images -q my-java-app)"
-
-      - name: Save Docker image as a tar file
         run: |
-          if [ -z "${{ steps.get_image_id.outputs.image_id }}" ]; then
-            echo "No image ID found for my-java-app. Exiting."
-            exit 1
+          IMAGE_ID=$(docker-compose images -q my-java-app)
+          if [ -z "$IMAGE_ID" ]; then
+          echo "No image ID found for my-java-app. Exiting."
+          exit 1
           fi
-          docker save ${{ steps.get_image_id.outputs.image_id }} -o my-java-app.tar
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+
+      - name: Save Docker image
+        if: success()
+        run: |
+          docker save -o my-java-app.tar $IMAGE_ID
 
       - name: Copy Docker image to server
         uses: appleboy/scp-action@v0.1.1
