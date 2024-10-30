@@ -7,36 +7,19 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted  # This ensures it runs on your self-hosted runner
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Build JAR with Maven
-        run: mvn clean package
-
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
       - name: Build Docker image
         run: docker build -t my-java-app .
-
-      - name: List Docker images (for debugging)
-        run: docker images
 
       - name: Stop and Remove Existing Container
         run: |
           docker stop my-java-app || true  # Ignore if it doesn't exist
           docker rm my-java-app || true
 
-          - name: Run Docker container
-            run: docker run -d --name my-java-app -p 8080:8080 my-java-app
+      - name: Run Docker container
+        run: docker run -d --name my-java-app -p 8080:8080 my-java-app
