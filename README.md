@@ -1,3 +1,14 @@
+# Github Actions
+When a new version of the java application is pushed to the main branch on Github local Docker container of the app is removed and new version is deployed.
+
+### Preparation
+- Set Up Self-Hosted Runner: Follow the instructions in GitHub to set up a self-hosted runner on your local machine.
+- Create GH Actions workflow file
+- Push to main
+- Observe results in GH Actions and locally on Docker Desktop
+![img_3.png](images/img_3.png)
+![img_4.png](images/img_4.png)
+
 # Elasticsearch autocomplete
 
 ### Instructions
