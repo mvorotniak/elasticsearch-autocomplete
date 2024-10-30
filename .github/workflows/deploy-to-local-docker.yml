@@ -36,10 +36,10 @@ jobs:
       - name: Get image ID for my-java-app
         id: get_image_id
         run: |
-          IMAGE_ID=$(docker-compose images -q my-java-app)
+          IMAGE_ID=$(docker images my-java-app --format "{{.ID}}")
           if [ -z "$IMAGE_ID" ]; then
-          echo "No image ID found for my-java-app. Exiting."
-          exit 1
+            echo "No image ID found for my-java-app. Exiting."
+            exit 1
           fi
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
 
