@@ -1,4 +1,4 @@
-name: Deploy to Local Docker
+name: Build and Deploy to Local Docker
 
 on:
   push:
@@ -6,19 +6,28 @@ on:
       - main
 
 jobs:
-  deploy:
-    runs-on: self-hosted  # This ensures it runs on your self-hosted runner
+  build:
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn clean package
 
       - name: Build Docker image
         run: docker build -t my-java-app .
 
       - name: Stop and Remove Existing Container
         run: |
-          docker stop my-java-app || true  # Ignore if it doesn't exist
+          docker stop my-java-app || true
           docker rm my-java-app || true
 
       - name: Run Docker container
